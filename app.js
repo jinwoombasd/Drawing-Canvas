@@ -1,5 +1,6 @@
 
-const fileInput =document.getElementById("file");
+const textInput = document.getElementById("text");
+const fileInput = document.getElementById("file");
 const modeBtn = document.getElementById("mode-btn");
 const eraseBtn = document.getElementById("erase-btn");
 const eraserBtn = document.getElementById("eraser-btn");
@@ -20,6 +21,7 @@ const Canvas_height = 800;
 canvas.width = 800;
 canvas.height = 800;
 ctx.lineWidth = lineWidth.value;
+ctx.lineCap = "round";
 let isPainting = false;
 let isFilling = false;
 
@@ -54,8 +56,8 @@ function onColorClick(event) {
   color.value = colorValue;
 }
 
-function onModeClick(){
-  if(isFilling){
+function onModeClick() {
+  if (isFilling) {
     isFilling = false;
     modeBtn.innerText = "Fill";
   } else {
@@ -64,37 +66,46 @@ function onModeClick(){
   }
 }
 
-function onCanvasClick(){
-  if(isFilling){
-    ctx.fillRect(0,0,Canvas_width,Canvas_height);
+function onCanvasClick() {
+  if (isFilling) {
+    ctx.fillRect(0, 0, Canvas_width, Canvas_height);
   }
 }
 
-function onEraseClick(){
+function onEraseClick() {
   ctx.fillStyle = "white"
-  ctx.fillRect(0,0,Canvas_width,Canvas_height);
+  ctx.fillRect(0, 0, Canvas_width, Canvas_height);
 }
 
-function onEraserClick(){
+function onEraserClick() {
   ctx.strokeStyle = "white";
   isFilling = false;
-  modeBtn.innerText ="Fill";
+  modeBtn.innerText = "Fill";
 }
 
-function onFileChange(event){
-  const file =  event.target.files[0];
+function onFileChange(event) {
+  const file = event.target.files[0];
   const url = URL.createObjectURL(file);
   const image = new Image();
   image.src = url;
-  image.onload = function(){
+  image.onload = function () {
     ctx.drawImage(image, 0, 0, Canvas_width, Canvas_height);
     fileInput.value = null;
   }
 }
 
+function onDoubleClick(event) {
+  ctx.save();
+  if (text !== "") {
+    const text = textInput.value;
+    ctx.lineWidth = 1;
+    ctx.font = "48px serif"
+    ctx.fillText(text, event.offsetX, event.offsetY);
+    ctx.restore();
+  }
+}
 
-
-
+canvas.addEventListener("dblclick", onDoubleClick);
 canvas.addEventListener("mousemove", onMove);
 canvas.addEventListener("mousedown", startPainting);
 canvas.addEventListener("mouseup", cancelPainting);
